@@ -40,6 +40,9 @@ class Service:
         if self.res_path and self.res_path.exists():
             os.remove(self.res_path)
 
+    def __str__(self):
+        return f"{self.name} - {self.service_type} -"
+
 
 # TODO: figure out some way to cut down on code repetition for these functions
 def run_generic_txt_service(src_url: str, format='text'):
