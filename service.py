@@ -44,7 +44,7 @@ class Service:
         return f"{self.name} - {self.service_type} -"
 
 
-# TODO: figure out some way to cut down on code repetition for these functions
+# TODO: figure out some way to cut down on code repetition for these functions; might not be possible for text services since we want to wrap the text in boilerplate text not from the apis
 def run_generic_txt_service(src_url: str, format='text'):
     res = requests.get(src_url)
     if res.status_code != 200:
@@ -71,25 +71,25 @@ def run_generic_img_service(src_url: str, dest_path: Path) -> str:
 def run_meowfacts(src_url: str) -> str:
     text = run_generic_txt_service(src_url, format='json')
     # extract what we want from json if `text` is defined, else return None
-    return text["data"][0] if text else None
+    return f"Did you know this about cats? - {text['data'][0]}" if text else None
 
 
 def run_dogapi(src_url: str) -> str:
     text = run_generic_txt_service(src_url, format='json')
     # extract what we want from json if `text` is defined, else return None
-    return text["facts"][0] if text else None
+    return f"Did you know this about dogs? - {text['facts'][0]}" if text else None
 
 
-def run_funfacts(src_url: str) -> str:  # TODO: test this
+def run_funfacts(src_url: str) -> str:
     text = run_generic_txt_service(src_url, format='json')
     # extract what we want from json if `text` is defined, else return None
-    return text[0] if text else None
+    return f"Fun Fact: \"{text[0]}\"" if text else None
 
 
 def run_tronalddump(src_url: str) -> str:
     text = run_generic_txt_service(src_url, format='json')
     # extract what we want from json if `text` is defined, else return None
-    return text["value"] if text else None
+    return f"\"{text['value']}\" - Donald Trump" if text else None
 
 
 def run_randomdog(src_url: str, dest_path: Path) -> str:
@@ -101,7 +101,7 @@ def run_randomdog(src_url: str, dest_path: Path) -> str:
     return run_generic_img_service(img_url, dest_path)
 
 
-def run_randomfox(src_url: str, dest_path: Path) -> str:  # TODO: test this
+def run_randomfox(src_url: str, dest_path: Path) -> str:
     url_res = requests.get(src_url)
     if url_res.status_code == 200:
         img_url = url_res.json()["image"].replace('\\', '')
@@ -137,7 +137,7 @@ services = [
     Service("funfacts", ServiceType.TXT, '',
             'http://api.aakhilv.me/fun/facts', run_funfacts),
     Service("tronalddump", ServiceType.TXT, '',
-            'https://tronalddump.io/random/quote', run_tronalddump),  # TODO: test this
+            'https://tronalddump.io/random/quote', run_tronalddump),
 
     # image services
     Service("cataas", ServiceType.IMG, 'res/cataas.jpg',
@@ -151,7 +151,7 @@ services = [
     Service('forzaapi', ServiceType.IMG, 'res/forzaapi.jpg',
             'https://forza-api.tk', run_forzaapi),
     Service('coffeeapi', ServiceType.IMG, 'res/coffeeapi.jpg',
-            'https://coffee.alexflipnote.dev/random', run_generic_img_service),  # TODO: test this
+            'https://coffee.alexflipnote.dev/random', run_generic_img_service),
     Service('foodish', ServiceType.IMG, 'res/foodish.jpg',
             'https://foodish-api.herokuapp.com/api/', run_foodish),
 ]
@@ -166,7 +166,7 @@ def test_txt_service(s: Service):
 def test_img_service(s: Service):
     path = s.run()
     print(f"{s.name}: {path}")
-    # _open_image_file(path)
+    _open_image_file(path)
     input('...')
     s.cleanup()
 
@@ -174,9 +174,8 @@ def test_img_service(s: Service):
 def _open_image_file(fp: Path):
     import sys
     import subprocess
-    # TODO: make this work
     if sys.platform.startswith('win'):
-        subprocess.call(fp, shell=True)
+        pass#subprocess.call(fp, shell=True) # TODO: make this work on Windows
     elif sys.platform.startswith('linux'):
         subprocess.call(['xdg-open', fp])
 

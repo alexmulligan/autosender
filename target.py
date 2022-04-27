@@ -7,13 +7,13 @@ from service import *
 
 class Target:
     name: str
-    number: str
+    email: str
     am_services: List[Service]
     pm_services: List[Service]
 
-    def __init__(self, new_name: str, new_number: str, new_am_services: List[Service]=None, new_pm_services: List[Service]=None):
+    def __init__(self, new_name: str, new_email: str, new_am_services: List[Service]=None, new_pm_services: List[Service]=None):
         self.name = new_name.strip()
-        self.number = new_number.strip()
+        self.email = new_email.strip()
         self.am_services = []
         if new_am_services:
             self.am_services.extend(new_am_services)
@@ -28,7 +28,7 @@ class Target:
         self.pm_services.append(new_service)
 
     def __str__(self):
-        return f"{self.name} - {self.number}\n\tAM: {', '.join([service.name for service in self.am_services])}\n\tPM: {', '.join([service.name for service in self.pm_services])}"
+        return f"{self.name} - {self.email}\n\tAM: {', '.join([service.name for service in self.am_services])}\n\tPM: {', '.join([service.name for service in self.pm_services])}"
 
 
 def load_targets_from_file(filepath: Union[Path, str]) -> Dict:
@@ -41,7 +41,7 @@ def load_targets_from_file(filepath: Union[Path, str]) -> Dict:
     targets = []
 
     for data in targets_data:
-        new_target = Target(data["name"], data["number"])
+        new_target = Target(data["name"], data["email"])
         for target_service_name in data["am_services"]:
             for service in services:
                 if service.name == target_service_name:
