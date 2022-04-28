@@ -6,12 +6,10 @@ from service import *
 from target import *
 from sender import *
 
-#LOG_PREFIX = f"[{datetime.now().strftime('%H:%M:%S, %m/%d/%y')}]\t"
-
-#AM_TIME_OF_DAY = timedelta(hours=17, minutes=5)   # debug
-#PM_TIME_OF_DAY = timedelta(hours=17, minutes=6)   # debug
+#AM_TIME_OF_DAY = timedelta(hours=21, minutes=45)   # debug
+#PM_TIME_OF_DAY = timedelta(hours=21, minutes=48)   # debug
 AM_TIME_OF_DAY = timedelta(hours=9, minutes=30)  # production
-PM_TIME_OF_DAY = timedelta(hours=16, minutes=30) # production
+PM_TIME_OF_DAY = timedelta(hours=17, minutes=30) # production
 
 
 def send_all_am_messages(targets: List[Target], creds: Dict[str, str]):
@@ -42,26 +40,31 @@ def mainloop():
         current_time = datetime.now()
 
         if not sent_am:
-            print(f"{LOG_PREFIX}Comparing to AM Time - current: ({current_time.strftime('%H:%M:%S')});  am: ({am_time('%H:%M:%S')})")
+            print(f"{LOG_PREFIX()}Comparing to AM Time - current: ({current_time.strftime('%H:%M:%S')});  am: ({am_time.strftime('%H:%M:%S')})  -  {current_time > am_time}")
             if current_time > am_time:
                 send_all_am_messages(targets, creds)
                 sent_am = True
                 last_time = current_time
 
         if not sent_pm:
-            print(f"{LOG_PREFIX}Comparing to PM Time - current: ({current_time.strftime('%H:%M:%S')});  pm: ({pm_time('%H:%M:%S')})")
+            print(f"{LOG_PREFIX()}Comparing to PM Time - current: ({current_time.strftime('%H:%M:%S')});  pm: ({pm_time.strftime('%H:%M:%S')})  -  {current_time > pm_time}")
             if current_time > pm_time:
                 send_all_pm_messages(targets, creds)
                 sent_pm = True
                 last_time = current_time
         
+        if sent_am and sent_pm:
+            print(f"{LOG_PREFIX()}Both AM and PM sent for the day. Doing nothing")
+        
         # if it is new day, reset am and pm sent status
         if current_time.day > last_time.day or current_time.month > last_time.month:
-            print(f"{LOG_PREFIX}Resetting sent flags")
+            print(f"{LOG_PREFIX()}Resetting sent flags")
             sent_am = False
             sent_pm = False
 
+        print(f"{LOG_PREFIX()}Sleeping for 5 minutes")
         time.sleep(300) # sleep for 5 minutes
+        print(f"{LOG_PREFIX()}Waking up from sleep")
     
 
 if __name__ == '__main__':

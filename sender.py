@@ -7,7 +7,8 @@ import yagmail
 from service import *
 from target import *
 
-LOG_PREFIX = f"[{datetime.now().strftime('%H:%M:%S, %m/%d/%y')}]\t"
+def LOG_PREFIX():
+    return f"[{datetime.now().strftime('%H:%M:%S, %m/%d/%y')}]\t"
 
 SUBJECT = 'Look at this...'
 
@@ -28,7 +29,7 @@ def send_am_messages(target: Target, creds: Dict):
         message_contents.append(service.run())
     
     yag.send(target.email, SUBJECT, message_contents)
-    print(f"{LOG_PREFIX}Sent AM Messages to {target.name} ({target.email})")
+    print(f"{LOG_PREFIX()}Sent AM Messages to {target.name} ({target.email})")
 
 
 def send_pm_messages(target: Target, creds: Dict):
@@ -38,7 +39,7 @@ def send_pm_messages(target: Target, creds: Dict):
         message_contents.append(service.run())
     
     yag.send(target.email, SUBJECT, message_contents)
-    print(f"{LOG_PREFIX}Sent PM Messages to {target.name} ({target.email})")
+    print(f"{LOG_PREFIX()}Sent PM Messages to {target.name} ({target.email})")
 
 
 if __name__ == '__main__':
