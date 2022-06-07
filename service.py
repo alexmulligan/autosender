@@ -27,21 +27,21 @@ class Service:
             self.res_path = None
 
         self.url = new_url
-        self.run_func = new_run_func
+        self._run_func = new_run_func
 
     def run(self) -> str:
         # Call run_func but only pass in res_path if service_type is IMG
         if self.service_type == ServiceType.TXT:
-            return self.run_func(self.url)
+            return self._run_func(self.url)
         else:
-            return self.run_func(self.url, self.res_path)
+            return self._run_func(self.url, self.res_path)
 
     def cleanup(self):
         if self.res_path and self.res_path.exists():
             os.remove(self.res_path)
 
     def __str__(self):
-        return f"{self.name} - {self.service_type} -"
+        return f"{self.name} - {self.service_type}"
 
 
 # TODO: figure out some way to cut down on code repetition for these functions; might not be possible for text services since we want to wrap the text in boilerplate text not from the apis
@@ -175,7 +175,7 @@ def _open_image_file(fp: Path):
     import sys
     import subprocess
     if sys.platform.startswith('win'):
-        pass#subprocess.call(fp, shell=True) # TODO: make this work on Windows
+        pass #subprocess.call(fp, shell=True) # TODO: make this work on Windows
     elif sys.platform.startswith('linux'):
         subprocess.call(['xdg-open', fp])
 
